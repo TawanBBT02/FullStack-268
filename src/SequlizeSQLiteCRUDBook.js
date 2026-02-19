@@ -25,13 +25,13 @@ const Book = sequelize.define('book', {
     author: {
         type: Sequelize.STRING,
         allowNull: false
-    },
+    }
 });
 
 sequelize.sync();
 
-app.get('/', (req, res) => {
-    res.send('Welcome to the Book API');
+app.get("/", (req, res) => {
+  res.send("Hello Books World!");
 });
 
 app.get('/books', (req, res) => {
@@ -42,10 +42,10 @@ app.get('/books', (req, res) => {
     });
 });
 
-app.get('/books/:id',(req, res) => {
+app.get('/books/:id', (req, res) => {
     Book.findByPk(req.params.id).then(book => {
-        if (!book) {
-            res.status(404).send('Book not found' );
+        if(!book) {
+            res.status(404).send('Book not found');
         } else {
             res.json(book);
         }
@@ -65,10 +65,10 @@ app.post('/books', (req, res) => {
 app.put('/books/:id', (req, res) => {
     Book.findByPk(req.params.id).then(book => {
         if (!book) {
-            res.status(404).json({ error: 'Book not found' });
+            res.status(404).send('Book not found');
         } else {
             book.update(req.body).then(() => {
-                res.json(book);
+                res.send(book);
             }).catch(err => {
                 res.status(500).send(err);
             });
@@ -80,8 +80,8 @@ app.put('/books/:id', (req, res) => {
 
 app.delete('/books/:id', (req, res) => {
     Book.findByPk(req.params.id).then(book => {
-        if (!book) {
-            res.status(404).json({ error: 'Book not found' });
+        if(!book) {
+            res.status(404).send('Book not found');
         } else {
             book.destroy().then(() => {
                 res.send({});
@@ -91,10 +91,8 @@ app.delete('/books/:id', (req, res) => {
         }
     }).catch(err => {
         res.status(500).send(err);
-    }
-    );
+    });
 });
+
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+app.listen(port, () => console.log(`Listening on port ${port}...`));

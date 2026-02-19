@@ -1,26 +1,27 @@
 const express = require('express');
 const axios = require('axios');
+const bodyParser = require('body-parser');
+const path = require('path');   // ✅ เพิ่มบรรทัดนี้
+
 const app = express();
-var bodyParser = require('body-parser');
-const e = require('express');
 
-const base_url = 'http://localhost:3000';
+const base_url = 'http://localhost:5000'; // ✅ แก้ให้ตรงกับ API backend
 
-app.set("views", path.join(__dirname, "/public/views"));
+app.set("views", path.join(__dirname, "public/views")); // เอา / หน้าออกก็ได้
 app.set("view engine", "ejs");
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Serve static files
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(path.join(__dirname, "public")));
 
-
-app.get('/',async (req, res) => {
+app.get('/', async (req, res) => {
     try {
         const response = await axios.get(`${base_url}/books`);
         res.render('books', { books: response.data });
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
         res.status(500).send("Error");
     }
 });
@@ -30,7 +31,7 @@ app.get('/books/:id', async (req, res) => {
         const response = await axios.get(`${base_url}/books/${req.params.id}`);
         res.render('book', { book: response.data });
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
         res.status(500).send("Error");
     }
 });
@@ -45,10 +46,11 @@ app.post("/create", async (req, res) => {
             title: req.body.title,
             author: req.body.author,
         };
+
         await axios.post(`${base_url}/books`, data);
         res.redirect("/");
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
         res.status(500).send("Error");
     }
 });
@@ -58,7 +60,7 @@ app.get("/update/:id", async (req, res) => {
         const response = await axios.get(`${base_url}/books/${req.params.id}`);
         res.render("update", { book: response.data });
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
         res.status(500).send("Error");
     }
 });
@@ -69,11 +71,11 @@ app.post("/update/:id", async (req, res) => {
             title: req.body.title,
             author: req.body.author,
         };
+
         await axios.put(`${base_url}/books/${req.params.id}`, data);
         res.redirect("/");
-    }
-    catch (error) {
-        console.error(error);
+    } catch (error) {
+        console.error(error.message);
         res.status(500).send("Error");
     }
 });
@@ -83,10 +85,11 @@ app.get("/delete/:id", async (req, res) => {
         await axios.delete(`${base_url}/books/${req.params.id}`);
         res.redirect("/");
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
         res.status(500).send("Error");
     }
 });
+
 app.listen(5500, () => {
     console.log("Server is running on port 5500");
 });
